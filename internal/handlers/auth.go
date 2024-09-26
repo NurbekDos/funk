@@ -6,6 +6,7 @@ import (
 
 	"github.com/NurbekDos/funk/internal/models"
 	"github.com/NurbekDos/funk/internal/repositories"
+	"github.com/NurbekDos/funk/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,6 +41,7 @@ func Register(c *gin.Context) {
 
 	// TODO check email
 	// TODO check user
+	// TODO hash password
 
 	id, err := repositories.CreateUser(&models.User{
 		Email:    req.Email,
@@ -64,14 +66,51 @@ type loginRequest struct {
 	Password string `json:"password"`
 }
 
+type loginResponse struct {
+	Id    uint   `json:"id"`
+	Token string `json:"token"`
+}
+
 func Login(c *gin.Context) {
 	req := &loginRequest{}
 
 	err := c.BindJSON(req)
 	if err != nil {
-		fmt.Println("CHE ZA HUINYA????")
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, nil)
+		return
 	}
 
-	fmt.Println(req)
+	user, err := repositories.GetUser(req.Email)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, nil)
+		return
+	}
+
+	// TODO hash password
+	if req.Password != user.Password {
+		fmt.Println("password err")
+		c.JSON(http.StatusUnauthorized, nil)
+		return
+	}
+
+	tokenClaims := services.TokenClaims{
+		UserId: user.ID,
+		Email:  user.Email,
+	}
+
+	token, err := services.GenerateToken(tokenClaims)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	resp := loginResponse{
+		Id:    user.ID,
+		Token: token,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
