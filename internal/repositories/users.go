@@ -41,3 +41,20 @@ func GetUser(email string) (*models.User, error) {
 	user.Email = email
 	return &user, nil
 }
+
+func IsUserExists(email string) bool {
+	query := `
+		SELECT EXISTS(
+			SELECT 1 FROM users WHERE email = $1 AND deleted_at IS NULL
+		);
+	`
+
+	var exists bool
+	row := db.DB.QueryRow(query, email)
+	err := row.Scan(&exists)
+
+	if err != nil {
+		return true
+	}
+	return exists
+}

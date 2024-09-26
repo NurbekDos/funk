@@ -40,7 +40,11 @@ func Register(c *gin.Context) {
 	}
 
 	// TODO check email
-	// TODO check user
+	if repositories.IsUserExists(req.Email) {
+		fmt.Println("email exists")
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
 
 	hPassword := hashPassword(req.Password)
 	id, err := repositories.CreateUser(&models.User{
