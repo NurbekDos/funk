@@ -41,11 +41,11 @@ func Register(c *gin.Context) {
 
 	// TODO check email
 	// TODO check user
-	// TODO hash password
 
+	hPassword := hashPassword(req.Password)
 	id, err := repositories.CreateUser(&models.User{
 		Email:    req.Email,
-		Password: req.Password,
+		Password: hPassword,
 	})
 
 	if err != nil {
@@ -88,8 +88,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// TODO hash password
-	if req.Password != user.Password {
+	hPassword := hashPassword(req.Password)
+	if hPassword != user.Password {
 		fmt.Println("password err")
 		c.JSON(http.StatusUnauthorized, nil)
 		return
