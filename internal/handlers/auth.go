@@ -3,11 +3,13 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/NurbekDos/funk/internal/models"
 	"github.com/NurbekDos/funk/internal/repositories"
 	"github.com/NurbekDos/funk/internal/services"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 type registerRequest struct {
@@ -99,9 +101,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	standardClaims := jwt.StandardClaims{
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // TODO time.HOUR * 24 -> const
+	}
 	tokenClaims := services.TokenClaims{
-		UserId: user.ID,
-		Email:  user.Email,
+		UserId:         user.ID,
+		Email:          user.Email,
+		StandardClaims: standardClaims,
 	}
 
 	token, err := services.GenerateToken(tokenClaims)
@@ -114,6 +120,32 @@ func Login(c *gin.Context) {
 	resp := loginResponse{
 		Id:    user.ID,
 		Token: token,
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+type meResponse struct {
+	Id    uint   `json:"id"`
+	Email string `json:"email"`
+}
+
+func Me(c *gin.Context) {
+	userStr, ok := c.Get("user")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, nil)
+		return
+	}
+
+	user, ok := userStr.(models.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	resp := meResponse{
+		Id:    user.ID,
+		Email: user.Email,
 	}
 
 	c.JSON(http.StatusOK, resp)
