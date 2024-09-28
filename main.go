@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/NurbekDos/funk/internal/db"
 	"github.com/NurbekDos/funk/internal/server"
@@ -16,8 +17,13 @@ func main() {
 
 	err = db.RunMigrations()
 	if err != nil {
-		log.Printf("RunMigrations error: %s\n", err.Error())
-		return
+		time.Sleep(time.Second * 10)
+
+		err = db.RunMigrations()
+		if err != nil {
+			log.Printf("RunMigrations error: %s\n", err.Error())
+			return
+		}
 	}
 
 	err = db.ConnectToPostgres()
