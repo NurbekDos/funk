@@ -4,11 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/NurbekDos/funk/internal/cfg"
 	"github.com/golang-migrate/migrate"
 )
 
 func RunMigrations() error {
-	migrateInstance, err := migrate.New(migrationsFolder, getPostgresUrl())
+	migrateInstance, err := migrate.New(migrationsFolder, cfg.GetConfig().PgUrl)
 	if err != nil {
 		return fmt.Errorf("golang-migrate: create migrate instance error: %s", err.Error())
 	}

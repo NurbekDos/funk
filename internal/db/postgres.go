@@ -3,8 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
+	"github.com/NurbekDos/funk/internal/cfg"
 	_ "github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/lib/pq"
@@ -20,7 +20,7 @@ func init() {
 }
 
 func ConnectToPostgres() error {
-	db, err := sql.Open("postgres", getPostgresUrl())
+	db, err := sql.Open("postgres", cfg.GetConfig().PgUrl)
 	if err != nil {
 		return fmt.Errorf("postgres: open connection error: %s", err.Error())
 	}
@@ -39,16 +39,4 @@ func Close() {
 	if err != nil {
 		fmt.Printf("postgres: closing DB error: %s\n", err.Error())
 	}
-}
-
-func getPostgresUrl() string {
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		os.Getenv("PG_USER"),
-		os.Getenv("PG_PASSWORD"),
-		os.Getenv("PG_HOST"),
-		os.Getenv("PG_PORT"),
-		os.Getenv("PG_DB_NAME"),
-		os.Getenv("PG_SSL_MODE"),
-	)
 }

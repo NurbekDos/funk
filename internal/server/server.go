@@ -1,16 +1,14 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"time"
 
+	"github.com/NurbekDos/funk/internal/cfg"
 	"github.com/NurbekDos/funk/internal/routers"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
-
-var port = 8081 // TODO: alyp tastap, env ga sal wws
 
 func Engine() {
 	engine := gin.Default()
@@ -28,7 +26,7 @@ func Engine() {
 
 	routers.SetUserRoutes(engine)
 
-	err := engine.Run(fmt.Sprintf(":%d", port))
+	err := engine.Run(":" + cfg.GetConfig().Port)
 	if err != nil {
 		log.Printf("GIN: engine.Run error: %s\n", err.Error())
 	}
