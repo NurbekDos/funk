@@ -1,4 +1,0 @@
-CREATE TABLE case (
-    id SERIAL PRIMARY KEY,
-    case_name VARCHAR(32) UNIQUE NOT NULL
-);

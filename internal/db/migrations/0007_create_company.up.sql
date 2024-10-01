@@ -1,4 +1,0 @@
-CREATE TABLE company (
-    id SERIAL PRIMARY KEY,
-    company_name VARCHAR(32) UNIQUE NOT NULL
-);

@@ -1,8 +1,8 @@
-CREATE TABLE user (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(64) UNIQUE NOT NULL,
+    email VARCHAR(64) NOT NULL,
     phone_number VARCHAR(20),
-    first_name VARCHAR(32),--personal_name
+    first_name VARCHAR(32),
     last_name VARCHAR(32),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
