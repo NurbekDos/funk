@@ -6,8 +6,11 @@ import (
 )
 
 type TokenClaims struct {
-	UserId uint
-	Email  string
+	UserId   uint
+	Type     string
+	Email    string // user
+	Username string // admin
+	Role     string //admin
 	jwt.StandardClaims
 }
 
