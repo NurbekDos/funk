@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/NurbekDos/funk/internal/cfg"
 	"github.com/NurbekDos/funk/internal/models"
 	"github.com/NurbekDos/funk/internal/repositories"
 	"github.com/NurbekDos/funk/internal/services"
@@ -107,6 +108,7 @@ func Login(c *gin.Context) {
 	tokenClaims := services.TokenClaims{
 		UserId:         user.ID,
 		Email:          user.Email,
+		Type:           cfg.UserType_User,
 		StandardClaims: standardClaims,
 	}
 

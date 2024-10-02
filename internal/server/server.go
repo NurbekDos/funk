@@ -25,6 +25,7 @@ func Engine() {
 	engine.Use(cors.New(config))
 
 	routers.SetUserRoutes(engine)
+	routers.SetAdminRouter(engine)
 
 	err := engine.Run(":" + cfg.GetConfig().Port)
 	if err != nil {

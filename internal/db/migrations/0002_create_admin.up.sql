@@ -1,6 +1,6 @@
 CREATE TABLE admin (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(64) NOT NULL,
+    username VARCHAR(64) UNIQUE NOT NULL,
     role VARCHAR(32) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     deleted_at TIMESTAMPTZ,
