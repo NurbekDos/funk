@@ -5,3 +5,8 @@ const (
 	UserType_Admin  = "admin"
 	UserType_Issuer = "issuer"
 )
+
+const (
+	AdminRole_Super = "superadmin"
+	AdminRole_Admin = "admin"
+)
