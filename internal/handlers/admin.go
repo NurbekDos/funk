@@ -69,3 +69,54 @@ func AdminCreateAdmin(c *gin.Context) {
 
 	c.JSON(http.StatusOK, createAdminResponse{Id: id})
 }
+
+type createIssuerRequest struct {
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	PhoneNumber string `json:"phone_number"`
+}
+
+type createIssuerResponse struct {
+	Id uint `json:"id"`
+}
+
+func AdminCreateIssuer(c *gin.Context) {
+	adminStr, ok := c.Get("admin")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, nil)
+		return
+	}
+
+	admin, ok := adminStr.(models.Admin)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	if admin.Role != cfg.AdminRole_Super && admin.Role != cfg.AdminRole_Admin {
+		c.JSON(http.StatusForbidden, nil)
+		return
+	}
+
+	req := createIssuerRequest{}
+	if err := c.BindJSON(&req); err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	issuer := models.Issuer{
+		Email:       req.Email,
+		Password:    req.Password,
+		PhoneNumber: req.PhoneNumber,
+	}
+
+	id, err := repositories.CreateIssuer(issuer, admin.ID)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, createIssuerResponse{Id: id})
+}
