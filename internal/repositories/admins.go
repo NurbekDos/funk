@@ -13,7 +13,7 @@ func CreateAdmin(admin models.Admin) (uint, error) {
 
 	var id uint
 
-	row := db.DB.QueryRow(query, admin.Username, admin.Role, admin.Username)
+	row := db.DB.QueryRow(query, admin.Username, admin.Role, admin.Password)
 	err := row.Scan(&id)
 
 	return id, err

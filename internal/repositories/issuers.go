@@ -18,3 +18,25 @@ func CreateIssuer(issuer models.Issuer, adminId uint) (uint, error) {
 
 	return id, err
 }
+
+func GetIssuer(email string) (*models.Issuer, error) {
+	query := `
+		SELECT id, password
+		FROM issuer
+		WHERE email = $1 AND deleted_at IS NULL
+	`
+
+	var issuer models.Issuer
+
+	row := db.DB.QueryRow(query, email)
+	err := row.Scan(
+		&issuer.ID,
+		&issuer.Password,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	issuer.Email = email
+	return &issuer, nil
+}

@@ -26,6 +26,7 @@ func Engine() {
 
 	routers.SetUserRoutes(engine)
 	routers.SetAdminRouter(engine)
+	routers.SetIssuerRouter(engine)
 
 	err := engine.Run(":" + cfg.GetConfig().Port)
 	if err != nil {

@@ -105,9 +105,11 @@ func AdminCreateIssuer(c *gin.Context) {
 		return
 	}
 
+	hPassword := hashPassword(req.Password)
+
 	issuer := models.Issuer{
 		Email:       req.Email,
-		Password:    req.Password,
+		Password:    hPassword,
 		PhoneNumber: req.PhoneNumber,
 	}
 
