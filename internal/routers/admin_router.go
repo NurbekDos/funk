@@ -14,4 +14,7 @@ func SetAdminRouter(engine *gin.Engine) {
 
 	v1.POST("/create", middlewares.AuthMiddleware(cfg.UserType_Admin), handlers.AdminCreateAdmin)
 	v1.POST("/issuers/create", middlewares.AuthMiddleware(cfg.UserType_Admin), handlers.AdminCreateIssuer)
+
+	v1.GET("/cases", handlers.Cases)
+	v1.POST("/cases/create", middlewares.AuthMiddleware(cfg.UserType_Admin), handlers.AdminCreateCase)
 }
