@@ -55,3 +55,31 @@ func AuthMiddleware(userType string) gin.HandlerFunc {
 		}
 	}
 }
+
+func CheckAdminRole(c *gin.Context) bool {
+	// Извлекаем администратора из контекста
+	adminStr, ok := c.Get("admin")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.Abort()
+		return false
+	}
+
+	// Проверяем тип данных
+	admin, ok := adminStr.(models.Admin)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Server error"})
+		c.Abort()
+		return false
+	}
+
+	// Проверяем роль администратора
+	if admin.Role != cfg.AdminRole_Super && admin.Role != cfg.AdminRole_Admin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Нет доступа"})
+		c.Abort()
+		return false
+	}
+
+	// Если всё в порядке, возвращаем администратора
+	return true
+}
