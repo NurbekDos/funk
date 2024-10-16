@@ -60,7 +60,7 @@ func AdminCreateCase(c *gin.Context) {
 
 	fmt.Println("req.CaseName", req.CaseName)
 	// Проверяем, существует ли уже кейс с таким же именем Если да то выводит ошибку
-	exists, err := repositories.ExistsInTable("cases", "case_name", req.CaseName)
+	exists, err := ExistsInTable("cases", "case_name", req.CaseName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check case existence"})
 		return
@@ -105,7 +105,7 @@ func AdminUpdateCase(c *gin.Context) {
 	fmt.Println("Case name: ", updateCase)
 
 	// Проверяем, существует ли уже кейс с таким же именем и ID
-	exists, err := repositories.ExistsInTable("cases", "id", updateCase.Id)
+	exists, err := ExistsInTable("cases", "id", updateCase.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check case existence"})
 		return
@@ -116,7 +116,7 @@ func AdminUpdateCase(c *gin.Context) {
 		return
 	}
 
-	exists, err = repositories.ExistsInTable("cases", "case_name", updateCase.CaseName)
+	exists, err = ExistsInTable("cases", "case_name", updateCase.CaseName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check case existence"})
 		return
@@ -161,7 +161,7 @@ func AdminDeleteCase(c *gin.Context) {
 	}
 
 	// Проверяем, существует ли запись с таким ID
-	exists, err := repositories.ExistsInTable("cases", "id", req.Id)
+	exists, err := ExistsInTable("cases", "id", req.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check case existence"})
 		return

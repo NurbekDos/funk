@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 // UniversalRepository - общий репозиторий
@@ -13,18 +14,29 @@ type UniversalRepository struct {
 
 // Создание записи (INSERT)
 func (r *UniversalRepository) Create(table string, columns []string, values []interface{}) (uint, error) {
-	columnsString := fmt.Sprintf("(%s)", joinColumns(columns))
-	placeholders := generatePlaceholders(len(values))
+	// columnsString := fmt.Sprintf("(%s)", joinColumns(columns))
+	// placeholders := generatePlaceholders(len(values))
 
-	fmt.Println("columnsString: ", columnsString)
-	fmt.Println("placeholders: ", placeholders)
-	fmt.Println("values: ", values)
+	// fmt.Println("columnsString: ", columnsString)
+	// fmt.Println("placeholders: ", placeholders)
+	// fmt.Println("values: ", values)
 
-	query := fmt.Sprintf("INSERT INTO %s %s VALUES (%s) RETURNING id", table, columnsString, placeholders)
+	// query := fmt.Sprintf("INSERT INTO %s %s VALUES (%s) RETURNING id", table, columnsString, placeholders)
 
+	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s) RETURNING id",
+		table,
+		strings.Join(columns, ", "),
+		strings.Join(createPlaceholders(len(values)), ", "),
+	)
+
+	fmt.Println("query:", query)
 	var id uint
 	err := r.DB.QueryRow(query, values...).Scan(&id)
-	return id, err
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 // Обновление записи (UPDATE)
@@ -69,4 +81,13 @@ func generateSetClause(columns []string) string {
 		}
 	}
 	return setClause
+}
+
+// Вспомогательная функция для создания placeholders ($1, $2, ...)
+func createPlaceholders(n int) []string {
+	placeholders := make([]string, n)
+	for i := 0; i < n; i++ {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+	}
+	return placeholders
 }
